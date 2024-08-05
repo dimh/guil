@@ -1,3 +1,4 @@
+
 from typing import List
 
 from .constants import (
@@ -40,18 +41,15 @@ async def get_by_similar(movies: List[dict], movie_name: str):
                 if len(intersection_cast)==len(movie_initial["genres"]):
                     movies_by_cast.append(movie)
         if len(movies_by_gender) > SIMILAR_QUANTITY:
-            return movies_by_gender[0:20]
+            return movies_by_gender[0:SIMILAR_QUANTITY]
         else:
-            set_by_gender = set(movies_by_gender)
-            set_by_rating = set(movies_by_rating)
-            gender_and_rating = list(set_by_gender.union(set_by_rating))
+            gender_and_rating = movies_by_gender + movies_by_rating
+            gender_and_rating = [i for n, i in enumerate(gender_and_rating) if i not in gender_and_rating[:n]]
             if len(gender_and_rating) > SIMILAR_QUANTITY:
-                return gender_and_rating[0:20]
+                return gender_and_rating[0:SIMILAR_QUANTITY]
             else:
-                set_by_gender_and_rating = set(gender_and_rating)
-                set_by_cast = set(movies_by_cast)
-                gender_and_rating_and_cast = list(set_by_gender_and_rating.union(set_by_cast))
-                return gender_and_rating_and_cast[0:20]
+                gender_and_rating_and_cast = gender_and_rating + movies_by_cast
+                return gender_and_rating_and_cast[0:SIMILAR_QUANTITY]
 
     else:
         return {"error": "movie doesn't found, please check movie name"}
